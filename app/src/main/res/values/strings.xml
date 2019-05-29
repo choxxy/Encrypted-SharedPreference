@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">Encrypted SP</string>
+    <string name="action_settings">Settings</string>
+    <string name="enter_data_to_be_encrypted_here">Enter data to be encrypted here</string>
+    <string name="encrypt_and_store">Encrypt and Store</string>
+    <string name="decrypt_and_restore">Decrypt and Restore</string>
+</resources>
