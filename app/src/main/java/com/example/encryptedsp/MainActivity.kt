@@ -17,6 +17,7 @@ import kotlinx.android.synthetic.main.content_main.*
 
 class MainActivity : AppCompatActivity() {
 
+    //variables will be initialised in the onCreate function
     lateinit var masterKeyAlias: String
     lateinit var sharedPreferences: SharedPreferences
 
@@ -25,8 +26,14 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         setSupportActionBar(toolbar)
 
+        //(1) create or retrieve masterkey from Android keystore
+        // masterkey is used to encrypt data encryption keys
         masterKeyAlias = MasterKeys.getOrCreate(MasterKeys.AES256_GCM_SPEC)
 
+        //(2) Get instance of EncryptedSharedPreferences class
+        // as part of the params we pass the storage name, reference to
+        // masterKey, context and the encryption schemes used to
+        // encrypt SharedPreferences keys and values respectively.
         sharedPreferences = EncryptedSharedPreferences.create(
             "encrypted_shared_prefs",
             masterKeyAlias,
@@ -39,10 +46,6 @@ class MainActivity : AppCompatActivity() {
 
         decrypt_data.setOnClickListener { view -> descryptAndShow() }
 
-        fab.setOnClickListener { view ->
-            Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                .setAction("Action", null).show()
-        }
     }
 
     private fun encryptAndStore() {
@@ -50,15 +53,20 @@ class MainActivity : AppCompatActivity() {
         if(TextUtils.isEmpty(data.text.toString()))
             data.error = "Data cannot empty!!"
 
+        //(3) Store text in sharepreferences as normally done
+        //data will be encrypted as its stored
         sharedPreferences.edit().putString("DATA",data.text.toString()).apply()
+
 
         Toast.makeText(MainActivity@this,"Data encrypted and Stored!",Toast.LENGTH_SHORT).show()
 
 
     }
 
+    //(4) retrieve text from storage and display it on a textview
     private fun descryptAndShow() {
 
+        // get data as it is normally done
         var restored = sharedPreferences.getString("DATA","")
         data.setText(restored)
 
@@ -66,19 +74,4 @@ class MainActivity : AppCompatActivity() {
 
     }
 
-    override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        menuInflater.inflate(R.menu.menu_main, menu)
-        return true
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        return when (item.itemId) {
-            R.id.action_settings -> true
-            else -> super.onOptionsItemSelected(item)
-        }
-    }
 }
